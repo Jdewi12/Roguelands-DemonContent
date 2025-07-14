@@ -1,4 +1,8 @@
-You need to add a file called "GamePaths.xml" to the folder ABOVE where you put this mod, with the following content:
+Adds new enemies to Demon's rift, as well as new loot and gear crafted with it.
+
+
+
+To build this project without modifying the .csproj file you need to add a file called "GamePaths.xml" to the folder ABOVE this one, with the following content:
 
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
