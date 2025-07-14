@@ -1,0 +1,261 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <ImportGroup>
+    <Import Project="../GamePaths.xml" />
+  </ImportGroup>
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{91AB81DE-EAEE-47D1-93DD-541179208219}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DemonContent</RootNamespace>
+    <AssemblyName>DemonContent</AssemblyName>
+    <TargetFrameworks>net35</TargetFrameworks>
+    <FileAlignment>512</FileAlignment>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Configurations>Release</Configurations>
+    <Authors>Jdewi</Authors>
+    <ApplicationIcon />
+    <StartupObject />
+    <Platforms>x86</Platforms>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net35|x86'">
+    <NoWarn>1701;1702</NoWarn>
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="ModInfo.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <UsingTask TaskName="GetFileVersion" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+    <ParameterGroup>
+      <AssemblyPath ParameterType="System.String" Required="true" />
+      <Version ParameterType="System.String" Output="true" />
+      <TrimmedVersion ParameterType="System.String" Output="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System.Diagnostics" />
+      <Using Namespace="System.Text" />
+      <Using Namespace="System.Linq" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+      this.Version = FileVersionInfo.GetVersionInfo(this.AssemblyPath).FileVersion;  
+      this.TrimmedVersion = this.Version.Split('.').TakeWhile(x => !x.Equals("0")).Aggregate(new StringBuilder(), (a, b) => { if (a.Length > 0) a.Append("."); a.Append(b); return a; }).ToString();
+      if (this.TrimmedVersion.IndexOf('.') == -1) this.TrimmedVersion += ".0";
+    ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <GetFileVersion AssemblyPath="$(TargetPath)">
+      <Output TaskParameter="Version" PropertyName="ModFullVersion" />
+      <Output TaskParameter="TrimmedVersion" PropertyName="AssemblyFileVersion" />
+    </GetFileVersion>
+    <ItemGroup>
+      <OldZip Include="$(TargetDir)$(AssemblyName)_v*.zip" />
+      <OldDest Include="$(GamePath)GadgetCore\Mods\$(AssemblyName)_v*.zip" />
+    </ItemGroup>
+    <Delete Files="@(OldZip)" />
+    <Delete Files="@(OldDest)" />
+    <MakeDir Directories="$(TargetDir)..\BuildCache\" />
+    <ZipDirectory SourceDirectory="$(TargetDir)" DestinationFile="$(TargetDir)..\BuildCache\$(AssemblyName)_v$(AssemblyFileVersion).zip" />
+    <Copy SourceFiles="$(TargetDir)..\BuildCache\$(AssemblyName)_v$(AssemblyFileVersion).zip" DestinationFiles="$(TargetDir)$(AssemblyName)_v$(AssemblyFileVersion).zip" />
+    <RemoveDir Directories="$(TargetDir)..\BuildCache\" />
+    <MakeDir Directories="$(GamePath)GadgetCore\Mods\" />
+    <Copy SourceFiles="$(TargetDir)$(AssemblyName)_v$(AssemblyFileVersion).zip" DestinationFiles="$(GamePath)GadgetCore\Mods\$(AssemblyName)_v$(AssemblyFileVersion).zip" />
+    <Message Importance="High" Text="Mod Exported to $(GamePath)GadgetCore\Mods\$(AssemblyName)_v$(AssemblyFileVersion).zip" />
+  </Target>
+  <ItemGroup>
+    <None Update="Assets\bugspot9.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\DemonEmblem.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\DemonHelm.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\DemonHelmEquip.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\DemonLance.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\DemonLanceUse.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\DemonRing.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\DemonStone.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\FireDemonArm.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\FireDemonBottom.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\FireDemonChest.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\FireDemonHead.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\FireDemonStomach.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\FireDemonWings.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\flyHead.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\flyWing.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Hazard.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\IceDemonBody.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\IceDemonBody2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\IceDemonhead.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\IceSpear.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\IceSpearTrail.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\ore9.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\PoisonDemonBody.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\PoisonDemonHead.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\PoisonDemonLeg.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\PoisonDemonLegs.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\PoisonDemonTail.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Recipes.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\ShadowArmor.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\ShadowEmblem.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\ShadowFabric.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\SoulEmblem.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\SoulRing.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\SoulShield.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\SoulWisp.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Manifest.ini">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Update="System">
+      <Private>false</Private>
+      <SpecificVersion>true</SpecificVersion>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Update="System.Data">
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Update="System.Drawing">
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Update="System.IO.Compression.FileSystem">
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Update="System.Numerics">
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Update="System.Runtime.Serialization">
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Update="System.Xml">
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Update="System.Xml.Linq">
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>Roguelands_Data\Managed\0Harmony.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>Roguelands_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="GadgetCore">
+      <HintPath>Roguelands_Data\Managed\GadgetCore.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="RecipeMenuCore">
+      <HintPath>..\..\for reference\RecipeMenuCore.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="System.Threading">
+      <HintPath>Roguelands_Data\Managed\System.Threading.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>Roguelands_Data\Managed\UnityEngine.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+</Project>
