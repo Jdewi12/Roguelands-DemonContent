@@ -1,4 +1,4 @@
-Adds new enemies to Demon's Rift, as well as new loot and gear crafted with it.
+Adds new enemies to Demon's Rift, as well as new loot and gear.
 
 
 
