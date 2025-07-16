@@ -22,21 +22,24 @@ namespace DemonContent.Patches
             RefreshModsMethod.Invoke(InstanceTracker.GameScript, new object[0]);
         }
 
-        public static Coroutine RefreshingCoroutine = null;
-
-        public static FieldInfo InventoryField = typeof(GameScript).GetField("inventory", BindingFlags.NonPublic | BindingFlags.Instance); 
         [HarmonyPrefix]
-        public static void Prefix(PlayerScript __instance, ref int dmg)
+        public static void Prefix(ref int dmg)
         {
-            if (!__instance.GetComponent<NetworkView>().isMine)
-                return;
-            if (GameScript.equippedIDs[1] == DemonContent.SoulShield.GetID()) 
+            dmg = (int)ApplyDamageReductionsDouble(dmg);
+        }
+
+        public static Coroutine RefreshingCoroutine = null;
+        public static FieldInfo InventoryField = typeof(GameScript).GetField("inventory", BindingFlags.NonPublic | BindingFlags.Instance);
+        // stack neutral and using doubles so we can easily use it for BigNumberCore via transpiler.
+        public static double ApplyDamageReductionsDouble(double dmg)
+        {
+            if (GameScript.equippedIDs[1] == DemonContent.SoulShield.GetID())
             {
                 int maxReduction = GameScript.mana;
                 int reduction;
                 if (maxReduction * 2 > dmg)
                 {
-                    reduction = dmg / 2;
+                    reduction = (int)(dmg / 2);
                 }
                 else
                 {
@@ -67,9 +70,10 @@ namespace DemonContent.Patches
                 if (RefreshingCoroutine != null)
                     InstanceTracker.GameScript.StopCoroutine(RefreshingCoroutine);
                 RefreshingCoroutine = InstanceTracker.GameScript.StartCoroutine(RefreshMods(delay: 1.6f));
-                
+
             }
 
+            return dmg;
         }
     }
 }

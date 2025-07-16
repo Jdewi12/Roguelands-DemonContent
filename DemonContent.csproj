@@ -233,15 +233,15 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
-      <HintPath>Roguelands_Data\Managed\0Harmony.dll</HintPath>
+      <HintPath>..\..\..\GadgetCore Roguelands\Roguelands_Data\Managed\0Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>Roguelands_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\..\GadgetCore Roguelands\Roguelands_Data\Managed\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="GadgetCore">
-      <HintPath>Roguelands_Data\Managed\GadgetCore.dll</HintPath>
+      <HintPath>..\..\..\GadgetCore Roguelands\Roguelands_Data\Managed\GadgetCore.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="RecipeMenuCore">
@@ -250,11 +250,11 @@
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="System.Threading">
-      <HintPath>Roguelands_Data\Managed\System.Threading.dll</HintPath>
+      <HintPath>..\..\..\GadgetCore Roguelands\Roguelands_Data\Managed\System.Threading.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>Roguelands_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\GadgetCore Roguelands\Roguelands_Data\Managed\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
