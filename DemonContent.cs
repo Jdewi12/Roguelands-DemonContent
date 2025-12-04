@@ -15,7 +15,7 @@ namespace DemonContent
     [Gadget("DemonContent", RequiredOnClients: true, Dependencies: new string[] { "RecipeMenuCore" })]
     public class DemonContent : Gadget
     {
-        public const string MOD_VERSION = "1.0"; // Set this to the version of your mod.
+        public const string MOD_VERSION = "1.2"; // Set this to the version of your mod.
         public const string CONFIG_VERSION = "1.0"; // Increment this whenever you change your mod's config file.
 
         public static GadgetLogger logger;
@@ -124,7 +124,7 @@ namespace DemonContent
                 Tex: GadgetCoreAPI.LoadTexture2D("DemonHelm.png"),
                 HeadTex: GadgetCoreAPI.LoadTexture2D("DemonHelmEquip.png"),
                 Value: 60,
-                Stats: new EquipStats(VIT: 12, STR: 8, DEX: 8, TEC: 0, MAG: 4, FTH: 4));
+                Stats: new EquipStats(VIT: 8, STR: 6, DEX: 5, TEC: 0, MAG: 4, FTH: 4));
             DemonHelm.Register();
 
             var shadowArmorTex = GadgetCoreAPI.LoadTexture2D("ShadowArmor.png");
@@ -142,18 +142,19 @@ namespace DemonContent
                 BodyTex: shadowArmorTex,
                 ArmTex: new Texture2D(0, 0),
                 Value: 60,
-                Stats: new EquipStats(VIT: 12, STR: 4, DEX: 4, TEC: 0, MAG: 8, FTH: 8));
+                Stats: new EquipStats(VIT: 8, STR: 4, DEX: 4, TEC: 0, MAG: 5, FTH: 5));
             ShadowArmor.Register();
 
             var soulShieldTex = GadgetCoreAPI.LoadTexture2D("SoulShield.png");
             SoulShield = new ItemInfo(
                 Type: ItemType.OFFHAND,
                 Name: "Soul Shield",
+                // Reduces damage by up to half at a cost of 1 mana per hp reduced.
                 Desc: "Damage taken is halved \nbefore other effects \nat the cost of mana.",
                 Tex: soulShieldTex,
                 HeldTex: soulShieldTex,
                 Value: 60,
-                Stats: new EquipStats(VIT: 8, STR: 4, DEX: 4, TEC: 4, MAG: 4, FTH: 4));
+                Stats: new EquipStats(VIT: 6, STR: 3, DEX: 3, TEC: 3, MAG: 3, FTH: 3));
             SoulShield.Register();
 
             const int lanceSelfDmg = 2;
@@ -190,13 +191,13 @@ namespace DemonContent
                 Desc: "Taking damage gives \na crazy burst of \nmovement speed.",
                 Tex: GadgetCoreAPI.LoadTexture2D("DemonRing.png"),
                 Value: 60,
-                Stats: new EquipStats(VIT: 7, STR: 4, DEX: 3, TEC: 0, MAG: 0, FTH: 0));
+                Stats: new EquipStats(VIT: 6, STR: 4, DEX: 3, TEC: 0, MAG: 0, FTH: 0));
             DemonRing.Register();
 
             SoulRing = new ItemInfo(
                 Type: ItemType.RING,
                 Name: "Soul Ring",
-                Desc: "Reduces damage taken \nout of combat mode by \n8, before most effects.",
+                Desc: "Reduces damage taken \nout of combat mode by \n6, before most effects.",
                 Tex: GadgetCoreAPI.LoadTexture2D("SoulRing.png"),
                 Value: 60,
                 Stats: new EquipStats(VIT: 3, STR: 0, DEX: 0, TEC: 0, MAG: 2, FTH: 2));

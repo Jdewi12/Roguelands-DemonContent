@@ -16,9 +16,14 @@ namespace DemonContent.Patches
     public static class Patch_PlayerScript_TD
     {
         public static MethodInfo RefreshModsMethod = typeof(GameScript).GetMethod("RefreshMODS", BindingFlags.NonPublic | BindingFlags.Instance);
-        public static IEnumerator RefreshMods(float delay)
+
+        public static float ClearBuffsTime = -1;
+        public static IEnumerator ClearTempBuffs(float delay)
         {
-            yield return new WaitForSeconds(delay);
+            ClearBuffsTime = Time.time + delay;
+            // Wait until we hit ClearBuffsTime. If ClearTempBuffs is called again before this is done, both coroutines should finish at the same time
+            while (Time.time < ClearBuffsTime)
+                yield return null;
             RefreshModsMethod.Invoke(InstanceTracker.GameScript, new object[0]);
         }
 
@@ -50,26 +55,38 @@ namespace DemonContent.Patches
                 InstanceTracker.GameScript.UpdateMana();
             }
             var inventory = (Item[])InventoryField.GetValue(InstanceTracker.GameScript);
-            if (inventory[36 + 4].id == DemonContent.SoulRing.GetID() ||
-                inventory[36 + 5].id == DemonContent.SoulRing.GetID())
+            int soulRings = 0;
+            if (inventory[36 + 4].id == DemonContent.SoulRing.GetID())
+                soulRings++;
+            if(inventory[36 + 5].id == DemonContent.SoulRing.GetID())
+                soulRings++;
+            if(soulRings > 0)
             {
                 if (!GameScript.combatMode)
                 {
-                    dmg -= 8;
+                    dmg -= 6 * soulRings;
                     if (dmg < 0)
                         dmg = 0;
                 }
             }
-            if (inventory[36 + 4].id == DemonContent.DemonRing.GetID() ||
-                inventory[36 + 5].id == DemonContent.DemonRing.GetID())
+            int demonRings = 0;
+            if (inventory[36 + 4].id == DemonContent.DemonRing.GetID())
+                demonRings++;
+            if (inventory[36 + 5].id == DemonContent.DemonRing.GetID())
+                demonRings++;
+            if(demonRings > 0)
             {
-                GameScript.MODS[17] = 40; // dash speed+
-                GameScript.MODS[18] = 35; // jump height+
-                GameScript.MODS[16] = 35; // move speed+
+                if (Time.time > ClearBuffsTime) // prevent the effect stacking if hit while still affected by previous effect (timer will reset though)
+                {
+                    GameScript.MODS[17] += 40 * demonRings; // dash speed+
+                    GameScript.MODS[18] += 15 + 20 * demonRings; // jump height+
+                    GameScript.MODS[16] += 40 * demonRings; // move speed+
+                }
 
                 if (RefreshingCoroutine != null)
                     InstanceTracker.GameScript.StopCoroutine(RefreshingCoroutine);
-                RefreshingCoroutine = InstanceTracker.GameScript.StartCoroutine(RefreshMods(delay: 1.6f));
+                var rb = InstanceTracker.PlayerScript.GetComponent<Rigidbody>();
+                RefreshingCoroutine = InstanceTracker.GameScript.StartCoroutine(ClearTempBuffs(delay: 1.6f));
 
             }
 
