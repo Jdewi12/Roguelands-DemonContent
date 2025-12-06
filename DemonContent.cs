@@ -154,7 +154,7 @@ namespace DemonContent
                 Tex: soulShieldTex,
                 HeldTex: soulShieldTex,
                 Value: 60,
-                Stats: new EquipStats(VIT: 6, STR: 3, DEX: 3, TEC: 3, MAG: 3, FTH: 3));
+                Stats: new EquipStats(VIT: 6, STR: 3, DEX: 2, TEC: 0, MAG: 2, FTH: 2));
             SoulShield.Register();
 
             const int lanceSelfDmg = 2;
