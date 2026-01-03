@@ -30,9 +30,15 @@ namespace DemonContent.Scripts
         {
             if(e == null)
                 FindTransforms();
-            Initialize(hp: BaseHP, contactDamage: 20, exp: BaseHP * 3 / 5 /*int division*/, isFlying: true);
+            int cL = GameScript.challengeLevel;
+            int maxHP = BaseHP + 500 * cL;
+            // actual drop amount is between quantity and quantity + variation (inclusive)
+            AddCurrencyDrop(currencyID: 52, quantity: maxHP / 6, quantityVariation: maxHP / 12);
+            Initialize(hp: maxHP, contactDamage: 18 + cL * 2 /*18, 20, 22, 24*/, exp: maxHP / 2 /*int division*/, isFlying: true);
             hazard.damage = ContactDamage;
-            FrostEffect = 4;
+            FrostEffect = 4; // 4, 4, 5, 6
+            if (cL >= 2)
+                FrostEffect += cL - 1;
             if (Network.isServer)
             {
                 StartCoroutine(AttackAI());
@@ -211,8 +217,11 @@ namespace DemonContent.Scripts
                 GameObject spear = (GameObject)GameObject.Instantiate(GadgetCoreAPI.GetCustomResource("haz/DemonContent/IceSpear"), new Vector3(transform.position.x + xDirection * (i - 1) * spacing, Mathf.Max(transform.position.y, yTarget) + 8f + (i % 2) * 2f, 0f), Quaternion.identity);
                 spears.Add(spear); 
                 spear.SendMessage("Sett", xDirection);
-                var script = spear.GetComponent<DemonSword>();
-                script.enabled = false;
+                var haz = spear.GetComponentInChildren<HazardScript>();
+                haz.damage = 14 + GameScript.challengeLevel;
+                haz.isFrost = 3 + GameScript.challengeLevel;
+                var spearScript = spear.GetComponent<DemonSword>();
+                spearScript.enabled = false;
                 GetComponent<AudioSource>().PlayOneShot((AudioClip)Resources.Load("Au/demonsword"), Menuu.soundLevel / 7f); // note: louder than normal
                 yield return new WaitForSeconds(0.2f);
             }

@@ -35,9 +35,18 @@ namespace DemonContent.Scripts
         {
             if(e == null)
                 FindTransforms();
-            Initialize(hp: BaseHP, contactDamage: 8, exp: BaseHP * 3 / 5 /*int division*/, isFlying: true);
+            int cL = GameScript.challengeLevel;
+            int maxHP = BaseHP; // +0; +100; +200; +400
+            if (cL < 2)
+                maxHP += cL * 100;
+            else
+                maxHP += (cL - 1) * 200;
+
+            // actual drop amount is between quantity and quantity + variation (inclusive)
+            AddCurrencyDrop(currencyID: 52, quantity: maxHP / 6, quantityVariation: maxHP / 12);
+            Initialize(hp: maxHP, contactDamage: 8 + cL * 2 /*8, 10, 12, 14*/, exp: 2 + maxHP * 3 / 5 /*int division*/, isFlying: true);
             hazard.damage = ContactDamage;
-            hazard.isPoison = 3;
+            hazard.isPoison = 3 + cL / 3; // 3, 3, 3, 4
             rigidbody.useGravity = true;
             anim["i"].layer = 0; // Just copying the layers and speed from chamchamscript
             anim["a"].layer = 1;

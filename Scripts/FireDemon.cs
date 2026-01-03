@@ -29,11 +29,18 @@ namespace DemonContent.Scripts
 
         public void Awake() 
         {
-            if(e == null)
+            if (e == null)
                 FindTransforms();
-            Initialize(hp: BaseHP, contactDamage: 15, exp: BaseHP * 3 / 5 /*int division*/, isFlying: true);
+            int cL = GameScript.challengeLevel;
+            int maxHP = BaseHP + 500 * cL;
+            // actual drop amount is between quantity and quantity + variation (inclusive)
+            AddCurrencyDrop(currencyID: 52, quantity: maxHP / 6, quantityVariation: maxHP / 12);
+            Initialize(hp: maxHP, contactDamage: 15 + cL, exp: maxHP * 3 / 5 /*int division*/, isFlying: true);
             leftArmHazard.damage = rightArmHazard.damage = ContactDamage;
-            leftArmHazard.isBurn = rightArmHazard.isBurn = BurnEffect = 4;
+            BurnEffect = 4;
+            if (cL > 0)
+                BurnEffect += 1;
+            leftArmHazard.isBurn = rightArmHazard.isBurn = BurnEffect;
             StartCoroutine(FlapWings());
             if(Network.isServer)
             {
@@ -253,8 +260,8 @@ namespace DemonContent.Scripts
                         prefabProj.deathTimer = 10f; // we need to set this before Instantiate so it's set before Awake is called.
                         GameObject p = (GameObject)Network.Instantiate(prefab, handPos, Quaternion.identity, 0);
                         var haz = p.GetComponent<HazardScript>();
-                        haz.damage = 16;
-                        haz.isBurn = 4;
+                        haz.damage = 15 + GameScript.challengeLevel;
+                        haz.isBurn = 4 + GameScript.challengeLevel / 2; // int division; 4, 4, 5, 5
                         p.SendMessage("EnemySet", targetPos, SendMessageOptions.DontRequireReceiver);
                         prefabProj.deathTimer = oldDeathTimer; // fix the prefab we modified
                     }
@@ -290,8 +297,8 @@ namespace DemonContent.Scripts
                     GameObject go = (GameObject)Network.Instantiate(Resources.Load("proj/spitter"), shotOrigin, Quaternion.identity, 0);
                     go.SendMessage("SpitterSet", SendMessageOptions.DontRequireReceiver);
                     var haz = go.GetComponent<HazardScript>();
-                    haz.damage = 14;
-                    haz.isBurn = 3;
+                    haz.damage = 14 + GameScript.challengeLevel;
+                    haz.isBurn = 3 + GameScript.challengeLevel / 2; // int division; 3, 3, 4, 4
                     var dir = AttackTarget.transform.position - shotOrigin;
                     go.transform.up = dir;
                 }

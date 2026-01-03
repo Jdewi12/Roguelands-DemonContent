@@ -15,8 +15,8 @@ namespace DemonContent
     [Gadget("DemonContent", RequiredOnClients: true, Dependencies: new string[] { "RecipeMenuCore" })]
     public class DemonContent : Gadget
     {
-        public const string MOD_VERSION = "1.2"; // Set this to the version of your mod.
-        public const string CONFIG_VERSION = "1.0"; // Increment this whenever you change your mod's config file.
+        public const string MOD_VERSION = "1.4";
+        public const string CONFIG_VERSION = "1.0";
 
         public static GadgetLogger logger;
 
@@ -311,8 +311,6 @@ namespace DemonContent
             GameObject.DestroyImmediate(azazel.GetComponent<Azazel>());
             FireDemon fireDemon = azazel.AddComponent<FireDemon>();//ReplaceComponent<Azazel, FireDemon>();
             fireDemon.FindTransforms();
-            // actual drop amount is between quantity and quantity + variation (inclusive)
-            fireDemon.AddCurrencyDrop(currencyID: 52, quantity: Scripts.FireDemon.BaseHP / 6, quantityVariation: Scripts.FireDemon.BaseHP / 3);
             fireDemon.AddLootTableDrop(item: ShadowFabric.Instantiate(), dropChance: 1f, minDropQuantity: 4, maxDropQuantity: 6);
             /* Modded drops?
             if (Gadgets.GetGadget("Crystal Crevasse")?.Enabled == true)
@@ -341,8 +339,6 @@ namespace DemonContent
             GameObject.DestroyImmediate(cthu.GetComponent<Cthu>());
             IceDemon iceDemon = cthu.AddComponent<IceDemon>();//ReplaceComponent<Azazel, FireDemon>();
             iceDemon.FindTransforms();
-            // actual drop amount is between quantity and quantity + variation (inclusive)
-            iceDemon.AddCurrencyDrop(currencyID: 52, quantity: Scripts.IceDemon.BaseHP / 6, Scripts.IceDemon.BaseHP / 3);
             iceDemon.AddLootTableDrop(item: ShadowFabric.Instantiate(), dropChance: 1f, minDropQuantity: 1, maxDropQuantity: 4);
             ChangeMaterial(iceDemon.head, "IceDemonHead.png");
             ChangeMaterial(iceDemon.arms, "IceDemonBody.png");
@@ -357,8 +353,6 @@ namespace DemonContent
             GameObject.DestroyImmediate(cham.GetComponent<ChamchamScript>());
             PoisonDemon poisonDemon = cham.AddComponent<PoisonDemon>();
             poisonDemon.FindTransforms();
-            // actual drop amount is between quantity and quantity + variation (inclusive)
-            poisonDemon.AddCurrencyDrop(currencyID: 52, quantity: Scripts.PoisonDemon.BaseHP / 6, Scripts.PoisonDemon.BaseHP / 3);
             poisonDemon.AddLootTableDrop(item: ShadowFabric.Instantiate(), dropChance: 1f, minDropQuantity: 1, maxDropQuantity: 4);
             ChangeMaterial(poisonDemon.head, "PoisonDemonHead.png");
             ChangeMaterial(poisonDemon.tail, "PoisonDemonTail.png");
@@ -372,9 +366,6 @@ namespace DemonContent
         static GameObject CreateIceSpear()
         {
             GameObject spear = UnityEngine.Object.Instantiate<GameObject>((GameObject)Resources.Load("haz/gruublade"));
-            var haz = spear.GetComponentInChildren<HazardScript>();
-            haz.damage = 15;
-            haz.isFrost = 3;
             Renderer proj = spear.transform.GetChild(0).GetComponentInChildren<Renderer>();
 
             proj.material = new Material(proj.material)
