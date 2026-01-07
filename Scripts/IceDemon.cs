@@ -36,7 +36,7 @@ namespace DemonContent.Scripts
             // actual drop amount is between quantity and quantity + variation (inclusive)
             AddCurrencyDrop(currencyID: 52, quantity: maxHP / 6, quantityVariation: maxHP / 12);
             Initialize(hp: maxHP, contactDamage: 18 + cL * 2 /*18, 20, 22, 24*/, exp: maxHP / 2 /*int division*/, isFlying: true);
-            hazard.damage = ContactDamage;
+            hazard.damage = ContactDamage - cL * 6; // hazardScript adds cL * 6
             frost = 4; // 4, 4, 5, 6
             if (cL >= 2)
                 frost += cL - 1;
@@ -242,8 +242,9 @@ namespace DemonContent.Scripts
                 spears.Add(spear); 
                 spear.SendMessage("Sett", xDirection);
                 var haz = spear.GetComponentInChildren<HazardScript>();
-                haz.damage = 14 + GameScript.challengeLevel;
-                haz.isFrost = 3 + GameScript.challengeLevel;
+                int cL = GameScript.challengeLevel;
+                haz.damage = 14 - cL * 3; // HazardScript adds cL * 6; so effectively: 14, 17, 20, 23
+                haz.isFrost = 3 + cL;
                 var spearScript = spear.GetComponent<DemonSword>();
                 spearScript.enabled = false;
                 GetComponent<AudioSource>().PlayOneShot((AudioClip)Resources.Load("Au/demonsword"), Menuu.soundLevel / 7f); // note: louder than normal

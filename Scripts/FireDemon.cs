@@ -38,7 +38,7 @@ namespace DemonContent.Scripts
             // actual drop amount is between quantity and quantity + variation (inclusive)
             AddCurrencyDrop(currencyID: 52, quantity: maxHP / 6, quantityVariation: maxHP / 12);
             Initialize(hp: maxHP, contactDamage: 15 + cL, exp: maxHP * 3 / 5 /*int division*/, isFlying: true);
-            leftArmHazard.damage = rightArmHazard.damage = ContactDamage;
+            leftArmHazard.damage = rightArmHazard.damage = ContactDamage - cL * 6; // HazardScript adds cL * 6
             burn = 4;
             if (cL > 0)
                 burn += 1;
@@ -271,7 +271,7 @@ namespace DemonContent.Scripts
                         GameObject p = (GameObject)Network.Instantiate(prefab, handPos, Quaternion.identity, 0);
                         var haz = p.GetComponent<HazardScript>();
                         haz.damage = 15 + GameScript.challengeLevel;
-                        haz.isBurn = 4 + GameScript.challengeLevel / 2; // int division; 4, 4, 5, 5
+                        haz.isBurn = 4 + GameScript.challengeLevel; // 4, 5, 6, 7
                         p.SendMessage("EnemySet", targetPos, SendMessageOptions.DontRequireReceiver);
                         prefabProj.deathTimer = oldDeathTimer; // fix the prefab we modified
                     }
@@ -307,8 +307,13 @@ namespace DemonContent.Scripts
                     GameObject go = (GameObject)Network.Instantiate(Resources.Load("proj/spitter"), shotOrigin, Quaternion.identity, 0);
                     go.SendMessage("SpitterSet", SendMessageOptions.DontRequireReceiver);
                     var haz = go.GetComponent<HazardScript>();
-                    haz.damage = 14 + GameScript.challengeLevel;
-                    haz.isBurn = 3 + GameScript.challengeLevel / 2; // int division; 3, 3, 4, 4
+                    int cL = GameScript.challengeLevel;
+                    haz.damage = 14; // 14, 16, 16, 18
+                    if (cL >= 1)
+                        haz.damage += 2;
+                    if (cL >= 3)
+                        haz.damage += cL - 1;
+                    haz.isBurn = 3 + cL / 2; // int division; 3, 3, 4, 4
                     var dir = AttackTarget.transform.position - shotOrigin;
                     go.transform.up = dir;
                 }
