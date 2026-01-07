@@ -15,7 +15,7 @@ namespace DemonContent
     [Gadget("DemonContent", RequiredOnClients: true, Dependencies: new string[] { "RecipeMenuCore" })]
     public class DemonContent : Gadget
     {
-        public const string MOD_VERSION = "1.4";
+        public const string MOD_VERSION = "1.5";
         public const string CONFIG_VERSION = "1.0";
 
         public static GadgetLogger logger;

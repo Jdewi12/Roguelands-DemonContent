@@ -27,6 +27,8 @@ namespace DemonContent.Scripts
 
         public const int BaseHP = 1800;
 
+        int burn;
+
         public void Awake() 
         {
             if (e == null)
@@ -37,10 +39,10 @@ namespace DemonContent.Scripts
             AddCurrencyDrop(currencyID: 52, quantity: maxHP / 6, quantityVariation: maxHP / 12);
             Initialize(hp: maxHP, contactDamage: 15 + cL, exp: maxHP * 3 / 5 /*int division*/, isFlying: true);
             leftArmHazard.damage = rightArmHazard.damage = ContactDamage;
-            BurnEffect = 4;
+            burn = 4;
             if (cL > 0)
-                BurnEffect += 1;
-            leftArmHazard.isBurn = rightArmHazard.isBurn = BurnEffect;
+                burn += 1;
+            leftArmHazard.isBurn = rightArmHazard.isBurn = burn;
             StartCoroutine(FlapWings());
             if(Network.isServer)
             {
@@ -50,6 +52,14 @@ namespace DemonContent.Scripts
 
             var networkView = GetComponent<NetworkView>();
             networkView.observed = rigidbody;
+        }
+
+        public override void OnCollisionEnter(Collision c)
+        {
+            base.OnCollisionEnter(c);
+            // Apply status manually to prevent the base class applying challenge level scaling to our status effects
+            if (burn > 0)
+                c.gameObject.SendMessage("BUR", burn);
         }
 
         bool triedHealthBar = false;

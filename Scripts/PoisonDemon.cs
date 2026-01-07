@@ -6,9 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Xml;
 using UnityEngine;
-using UnityEngine.Networking.Types;
 using Random = UnityEngine.Random;
 
 namespace DemonContent.Scripts
@@ -26,8 +24,6 @@ namespace DemonContent.Scripts
 
         public HazardScript hazard;
         public Animation anim;
-
-        private bool attacking = false;
 
         public const int BaseHP = 230;
 
@@ -60,7 +56,6 @@ namespace DemonContent.Scripts
             var networkView = GetComponent<NetworkView>();
             networkView.observed = rigidbody;
         }
-
 
         protected override void InternalInit()
         {
@@ -154,9 +149,10 @@ namespace DemonContent.Scripts
         IEnumerator FollowAI()
         {
             float timeSinceJump = 0f;
+            float autoJumpTime = 2f;
             while (true)
             {
-                if (AttackTarget != null && !attacking)
+                if (AttackTarget != null)
                 {
                     if(timeSinceJump == 0f)
                         GetComponent<NetworkView>().RPC(nameof(Aggro), RPCMode.All);
@@ -173,15 +169,16 @@ namespace DemonContent.Scripts
                         head.localScale = Vector3.one;
                     }
 
-                    if(Mathf.Abs(xDiff) > 1f && timeSinceJump > 0.4f)
-                        rigidbody.velocity = new Vector3(xDir * 15f, rigidbody.velocity.y);
+                    if(Mathf.Abs(xDiff) > 1f)// && timeSinceJump > 0.4f)
+                        rigidbody.velocity = new Vector3(xDir * 14f, rigidbody.velocity.y);
                     if (timeSinceJump > 0.85f) // cooldown
                     { 
                         float yDiff = AttackTarget.transform.position.y - eSub.transform.position.y;
-                        if(yDiff > 1f)
+                        if((yDiff > 1f) || (timeSinceJump > autoJumpTime))
                         {
                             rigidbody.velocity = new Vector3(rigidbody.velocity.x, 28f);
                             timeSinceJump = 0f;
+                            autoJumpTime = Random.Range(0.85f, 3f);
                             //anim.Play("j"); // jumping?
                         }
                     }

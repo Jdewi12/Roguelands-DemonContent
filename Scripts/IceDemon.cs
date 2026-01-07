@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Xml;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -23,8 +22,10 @@ namespace DemonContent.Scripts
         public HazardScript hazard;
 
         private bool attacking = false;
+        private List<GameObject> spears = new List<GameObject>();
 
         public const int BaseHP = 1000;
+        int frost;
 
         public void Awake() 
         {
@@ -36,9 +37,9 @@ namespace DemonContent.Scripts
             AddCurrencyDrop(currencyID: 52, quantity: maxHP / 6, quantityVariation: maxHP / 12);
             Initialize(hp: maxHP, contactDamage: 18 + cL * 2 /*18, 20, 22, 24*/, exp: maxHP / 2 /*int division*/, isFlying: true);
             hazard.damage = ContactDamage;
-            FrostEffect = 4; // 4, 4, 5, 6
+            frost = 4; // 4, 4, 5, 6
             if (cL >= 2)
-                FrostEffect += cL - 1;
+                frost += cL - 1;
             if (Network.isServer)
             {
                 StartCoroutine(AttackAI());
@@ -46,6 +47,28 @@ namespace DemonContent.Scripts
             }
             var networkView = GetComponent<NetworkView>();
             networkView.observed = rigidbody;
+        }
+
+        protected override void Wipe()
+        {
+            foreach (var go in spears)
+            {
+                if(go != null)
+                {
+                    GameObject.Destroy(go);
+                }
+            }
+            spears = new List<GameObject>();
+            base.Wipe();
+        }
+
+
+        public override void OnCollisionEnter(Collision c)
+        {
+            base.OnCollisionEnter(c);
+            // Apply status manually to prevent the base class applying challenge level scaling to our status effects
+            if (frost > 0)
+                c.gameObject.SendMessage("FRO", frost);
         }
 
         bool triedHealthBar = false;
@@ -176,9 +199,9 @@ namespace DemonContent.Scripts
 
         IEnumerator AttackAI()
         {
+            yield return new WaitForSeconds(Random.Range(0.2f, 2f));
             while (true)
             {
-                yield return new WaitForSeconds(Random.Range(2.3f, 4.5f));
                 if (AttackTarget != null)
                 {
                     float rng = Random.Range(0f, 1f);
@@ -191,6 +214,7 @@ namespace DemonContent.Scripts
                         GetComponent<NetworkView>().RPC(nameof(StartFrostAura), RPCMode.All);
                     }
                 }
+                yield return new WaitForSeconds(Random.Range(2.3f, 4.5f));
             }
         }
 
@@ -205,14 +229,14 @@ namespace DemonContent.Scripts
             int xDirection = xTarget > transform.position.x ? 1 : -1;
             attacking = true;
             yield return new WaitForSeconds(0.3f);
-            List<GameObject> spears = new List<GameObject>();
+            spears = new List<GameObject>();
             float spacing = 6f;
             int numSpears = Mathf.Clamp(Mathf.RoundToInt((transform.position.x - xTarget)/ spacing) + 4,
                 4,
                 8);
             for (int i = 0; i < numSpears; i++)
             {
-                if (HP == 0) // we died mid-attack
+                if (HP <= 0) // we died mid-attack
                     break;
                 GameObject spear = (GameObject)GameObject.Instantiate(GadgetCoreAPI.GetCustomResource("haz/DemonContent/IceSpear"), new Vector3(transform.position.x + xDirection * (i - 1) * spacing, Mathf.Max(transform.position.y, yTarget) + 8f + (i % 2) * 2f, 0f), Quaternion.identity);
                 spears.Add(spear); 
@@ -225,7 +249,8 @@ namespace DemonContent.Scripts
                 GetComponent<AudioSource>().PlayOneShot((AudioClip)Resources.Load("Au/demonsword"), Menuu.soundLevel / 7f); // note: louder than normal
                 yield return new WaitForSeconds(0.2f);
             }
-            yield return new WaitForSeconds(0.3f);
+            if(HP > 0) // not sure if the coroutine would keep running if we were to wait after death
+                yield return new WaitForSeconds(0.3f);
             GetComponent<AudioSource>().PlayOneShot((AudioClip)Resources.Load("Au/fire"), Menuu.soundLevel / 10f);
             foreach (var spear in spears)
             {
@@ -242,7 +267,7 @@ namespace DemonContent.Scripts
             StartCoroutine(FrostAura());
         }
 
-        IEnumerator FrostAura()
+        IEnumerator FrostAura() // todo: A pulse that builds up in frostiness the further it gets, then comes back in
         {
             yield break;
         }
