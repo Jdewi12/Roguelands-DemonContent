@@ -299,8 +299,11 @@ namespace DemonContent
                     mainTexture = GadgetCoreAPI.LoadTexture2D("Hazard.png")
                 };
             }
-            var hazScript = hazard.GetComponentInChildren<HazardScript>();
-            hazScript.damage = 16;
+            /*foreach (var comp in hazard.GetComponentsInChildren<MonoBehaviour>())
+                DemonContent.Log("Haz has " + comp);*/
+            // for some reason there are two HazardScripts.
+            var hazScripts = hazard.GetComponentsInChildren<HazardScript>();
+            hazScripts.ForEach(x => x.Set(16));
             return hazard;
         }
 
