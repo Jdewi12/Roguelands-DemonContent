@@ -27,6 +27,8 @@ namespace DemonContent.Scripts
 
         public const int BaseHP = 1800;
 
+        private int damage; // just for BigNumberCore
+
         int burn;
 
         public void Awake() 
@@ -38,6 +40,7 @@ namespace DemonContent.Scripts
             // actual drop amount is between quantity and quantity + variation (inclusive)
             AddCurrencyDrop(currencyID: 52, quantity: maxHP / 6, quantityVariation: maxHP / 12);
             Initialize(hp: maxHP, contactDamage: 15 + cL, exp: maxHP * 3 / 5 /*int division*/, isFlying: true);
+            damage = ContactDamage;
             leftArmHazard.damage = rightArmHazard.damage = ContactDamage - cL * 6; // HazardScript adds cL * 6
             burn = 4;
             if (cL > 0)

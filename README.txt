@@ -2,7 +2,7 @@ Adds new enemies to Demon's Rift, as well as new loot and gear.
 
 
 
-To build this project without modifying the .csproj file you need to add a file called "GamePaths.xml" to the folder ABOVE this one, with the following content:
+To build this project without modifying the .csproj file you need to add a file called "GamePaths.xml" to the same folder this file is in, with the following content:
 
 <?xml version="1.0" encoding="utf-8"?>
 <Project>

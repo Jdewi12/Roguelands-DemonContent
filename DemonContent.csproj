@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <ImportGroup>
-    <Import Project="../GamePaths.xml" />
+    <Import Project="GamePaths.xml" />
   </ImportGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
@@ -233,28 +233,28 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
-      <HintPath>..\..\..\GadgetCore Roguelands\Roguelands_Data\Managed\0Harmony.dll</HintPath>
+      <HintPath>$(GamePath)$(ManagedFolder)0Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\GadgetCore Roguelands\Roguelands_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>$(GamePath)$(ManagedFolder)Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="GadgetCore">
-      <HintPath>..\..\..\GadgetCore Roguelands\Roguelands_Data\Managed\GadgetCore.dll</HintPath>
+      <HintPath>$(GamePath)$(ManagedFolder)GadgetCore.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="RecipeMenuCore">
-      <HintPath>..\..\for reference\RecipeMenuCore.dll</HintPath>
+      <HintPath>..\for reference\RecipeMenuCore.dll</HintPath>
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="System.Threading">
-      <HintPath>..\..\..\GadgetCore Roguelands\Roguelands_Data\Managed\System.Threading.dll</HintPath>
+      <HintPath>$(GamePath)$(ManagedFolder)System.Threading.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\GadgetCore Roguelands\Roguelands_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>$(GamePath)$(ManagedFolder)UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>

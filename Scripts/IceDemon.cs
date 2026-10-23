@@ -25,6 +25,8 @@ namespace DemonContent.Scripts
         private List<GameObject> spears = new List<GameObject>();
 
         public const int BaseHP = 1000;
+
+        private int damage; // just for BigNumberCore
         int frost;
 
         public void Awake() 
@@ -36,6 +38,7 @@ namespace DemonContent.Scripts
             // actual drop amount is between quantity and quantity + variation (inclusive)
             AddCurrencyDrop(currencyID: 52, quantity: maxHP / 6, quantityVariation: maxHP / 12);
             Initialize(hp: maxHP, contactDamage: 18 + cL * 2 /*18, 20, 22, 24*/, exp: maxHP / 2 /*int division*/, isFlying: true);
+            damage = ContactDamage;
             hazard.damage = ContactDamage - cL * 6; // hazardScript adds cL * 6
             frost = 4; // 4, 4, 5, 6
             if (cL >= 2)
